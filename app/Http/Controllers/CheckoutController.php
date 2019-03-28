@@ -21,7 +21,7 @@ class CheckoutController extends Controller
         $solvent->save();
 
         if($solvent->stock == $solvent->warning) {
-            $this->emailManager();
+            $this->emailManager($solvent);
             session()->flash('success', 'The responsible PhD student was informed by e-mail.');
         }
 
@@ -37,14 +37,14 @@ class CheckoutController extends Controller
         $solvent->save();
 
         if($solvent->stock <= $solvent->warning) {
-            $this->emailManager();
+            $this->emailManager($solvent);
             session()->flash('success', 'The responsible PhD student was informed by e-mail.');
         }
 
         return view('solvent.adjustedstock', compact('solvent'));
     }
 
-    protected function emailManager()
+    protected function emailManager($solvent)
     {
         Mail::to(env('SOLVENT_BOSS_EMAIL'))
             ->queue(new SolventWarning($solvent));
